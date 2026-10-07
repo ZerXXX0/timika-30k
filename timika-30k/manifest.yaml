@@ -1,0 +1,65 @@
+name: timika-50k
+# Derived dataset, not a single download. naming-convention.md's schema
+# (one paper, one source url) doesn't fit; adapted below per its own
+# "Open / not decided" section on generator/derived content. See
+# README.md in this folder for full composition, exclusion, and
+# methodology detail.
+derived_from:
+  - dataset: shenzhen
+    path: C:\dataset\shenzhen
+    images: 662
+  - dataset: montgomery
+    path: C:\dataset\montgomery
+    images: 138
+  - dataset: tbx11k
+    path: C:\dataset\tbx11k
+    images: 11490
+    note: "12,278 in the source dataset; data/extra/ (576, bonus augmentation) dropped entirely, 216 internal duplicates excluded from the remainder"
+  - dataset: chestxdet
+    path: C:\dataset\chestxdet
+    images: 3577
+    note: "3,578 in the source dataset; 1 train/test leakage duplicate excluded"
+  - dataset: covid19_radiography
+    path: C:\dataset\covid19_radiography
+    images: 21165
+  - dataset: bimcv_caaxr
+    path: E:\dataset\bimcv_caaxr
+    images: 2539
+    note: "2,591 in the source dataset; 52 internal near-duplicates excluded"
+  - dataset: siim_acr_pneumothorax
+    path: E:\dataset\siim_acr_pneumothorax
+    images: 12088
+    note: "12,089 in the source dataset; 1 internal duplicate (a train/test leakage pair) excluded"
+modality: chest_radiography
+contents:
+  data: [imaging]
+  labels: [organ_region_segmentation, disease_segmentation]  # disease partial: DS group only (Shenzhen, ChestX-Det, SIIM-ACR), see README.md
+license: >
+  No single license, inherits each source dataset's own terms (see each
+  source's own manifest.yaml linked above). This dataset's own restricted/
+  phi/no_redistribution flags below are the union of all 7 sources', the
+  most restrictive term governs the whole derived set since it physically
+  contains copies of every source's images.
+version: v1
+restricted: true    # shenzhen, montgomery, covid19_radiography, bimcv_caaxr, siim_acr_pneumothorax all restricted
+phi: false           # all 7 sources phi: false
+no_redistribution: true  # shenzhen, montgomery, bimcv_caaxr, siim_acr_pneumothorax all no_redistribution: true
+
+# --- notes, not part of the schema, kept for the human record ---
+# Built 2026-08-27/28, originally 5 sources / 37,033 images. BIMCV-CAAXR and
+# SIIM-ACR Pneumothorax folded in 2026-08-29 as the 6th and 7th sources,
+# bringing the total to 51,660 images; see README.md's "Made from" and
+# "Invalid and duplicate handling" for the exclusion detail on both.
+# ChestX-Det's own dedup sweep, deferred at build time, ran 2026-08-30 and
+# found 1 train/test leakage duplicate, excluded, current total 51,659.
+# labels/organ_region/ extended to all 51,659 images 2026-08-30, see
+# README.md's "Labels" section. Eligibility rule, exclusion reasoning, label
+# methodology, and known issues are all in this folder's own README.md,
+# not duplicated here. C: copy removed 2026-08-29, this dataset is E-only
+# now, intentional, not the naming-convention.md C:-canonical/E:-mirror
+# default. labels/disease/ built 2026-09-01 for the DS group only (Shenzhen,
+# ChestX-Det, SIIM-ACR, the 3 sources with real disease masks), 27,631
+# files, see repo/timika50k_pseudolabels/README.md; the DB group (TBX11K,
+# BIMCV-CAAXR) and OS group (Montgomery, COVID-19 Radiography Database)
+# remain blocked on the disease model retrain, so build isn't fully
+# verified/complete yet.

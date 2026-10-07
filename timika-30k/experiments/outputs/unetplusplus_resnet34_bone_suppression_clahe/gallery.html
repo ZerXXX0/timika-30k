@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Inference Samples - unetplusplus_resnet34_bone_suppression_clahe</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 24px; }
+        h1 { color: #38bdf8; margin-bottom: 8px; }
+        .meta { background: #1e293b; padding: 16px; border-radius: 8px; margin-bottom: 24px; }
+        .grid { display: flex; flex-direction: column; gap: 20px; }
+        .sample-card { background: #1e293b; padding: 16px; border-radius: 10px; border: 1px solid #334155; }
+        .sample-card h4 { margin: 0 0 12px 0; color: #94a3b8; font-weight: 500; }
+        .sample-card img { width: 100%; max-width: 1560px; height: auto; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <h1>CXR Segmentation Inference Gallery</h1>
+    <div class="meta">
+        <p><strong>Model:</strong> UNETPLUSPLUS (resnet34) &nbsp;|&nbsp; <strong>Scenario:</strong> Bone Suppressed + CLAHE</p>
+        <p><strong>Total Samples:</strong> 5 &nbsp;|&nbsp; <strong>Decision Threshold:</strong> 0.5 &nbsp;|&nbsp; <strong>Min Component Pixels:</strong> 30</p>
+        <p><strong>Summary Table:</strong> <a href="test_inference_summary.csv" style="color: #38bdf8;">Download test_inference_summary.csv</a></p>
+    </div>
+    <div class="grid">
+        
+            <div class="sample-card">
+                <h4>#001: tbx11k__test__unknown_1648.png (Patient: unknown_1648 | TBX11K)</h4>
+                <img src="visualizations/sample_001_tbx11k__test__unknown_1648.png" alt="tbx11k__test__unknown_1648.png" loading="lazy"/>
+            </div>
+            
+            <div class="sample-card">
+                <h4>#002: chestxdet__test__69934.png (Patient: 69934 | CHESTXDET)</h4>
+                <img src="visualizations/sample_002_chestxdet__test__69934.png" alt="chestxdet__test__69934.png" loading="lazy"/>
+            </div>
+            
+            <div class="sample-card">
+                <h4>#003: chestxdet__test__39502.png (Patient: 39502 | CHESTXDET)</h4>
+                <img src="visualizations/sample_003_chestxdet__test__39502.png" alt="chestxdet__test__39502.png" loading="lazy"/>
+            </div>
+            
+            <div class="sample-card">
+                <h4>#004: tbx11k__test__unknown_1424.png (Patient: unknown_1424 | TBX11K)</h4>
+                <img src="visualizations/sample_004_tbx11k__test__unknown_1424.png" alt="tbx11k__test__unknown_1424.png" loading="lazy"/>
+            </div>
+            
+            <div class="sample-card">
+                <h4>#005: chestxdet__test__41220.png (Patient: 41220 | CHESTXDET)</h4>
+                <img src="visualizations/sample_005_chestxdet__test__41220.png" alt="chestxdet__test__41220.png" loading="lazy"/>
+            </div>
+            
+    </div>
+</body>
+</html>

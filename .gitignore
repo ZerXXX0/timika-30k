@@ -1,0 +1,185 @@
+# ==============================================================================
+# Git Ignore Configuration: Timika-30k CXR Segmentation & Deep Learning Pipeline
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Bytecode, Compilations & Python Caches
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.dll
+*.dylib
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ------------------------------------------------------------------------------
+# 2. Virtual Environments & Packages
+# ------------------------------------------------------------------------------
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ------------------------------------------------------------------------------
+# 3. Model Weights, Checkpoints & Large Binaries
+# ------------------------------------------------------------------------------
+# Ignore all deep learning weights and model dumps
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.onnx
+*.engine
+*.h5
+*.hdf5
+*.pb
+*.tflite
+*.safetensors
+*.pkl
+*.pickle
+*.joblib
+
+# Model Checkpoints & Large Binaries (Ignore all weights, keep lightweight CSV logs)
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.onnx
+*.engine
+*.h5
+*.hdf5
+*.pb
+*.tflite
+*.safetensors
+*.pkl
+*.pickle
+*.joblib
+**/checkpoints/**/*.pth
+**/checkpoints/**/*.pt
+**/checkpoints/**/*.ckpt
+**/checkpoints/**/*.bin
+**/checkpoints/**/*.safetensors
+
+# ------------------------------------------------------------------------------
+# 4. Large Datasets, Raw Images, Masks & Medical Imaging Files
+# ------------------------------------------------------------------------------
+# Raw and source dataset folders
+data/
+**/data/
+
+# Preprocessed image directories (tens of gigabytes of CXR images)
+preprocessed_bone_suppressed/
+preprocessed_bone_suppression_clahe/
+preprocessed_clahe/
+**/preprocessed_bone_suppressed/
+**/preprocessed_bone_suppression_clahe/
+**/preprocessed_clahe/
+
+# Dense pixel mask folders (tens of thousands of mask PNG/NPY files)
+labels/
+preprocessed_labels/
+**/labels/
+**/preprocessed_labels/
+
+# nnU-Net dataset structures and preprocessed folders
+nnunet/
+nnunet_raw/
+**/nnunet/
+**/nnunet_raw/
+nnUNet_raw_data_base/
+nnUNet_preprocessed/
+RESULTS_FOLDER/
+
+# Medical imaging formats & large array dumps
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.mhd
+*.raw
+*.npy
+*.npz
+
+# Large archives and compressed packages
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.7z
+*.rar
+*.bz2
+
+# ------------------------------------------------------------------------------
+# 5. Output Image Visualizations & Heavy Inference Dumps
+# ------------------------------------------------------------------------------
+# Ignore bulk visualization card renders (thousands of 3-panel PNGs)
+**/visualizations/
+**/outputs/**/visualizations/
+**/outputs/**/*.png
+**/outputs/**/*.jpg
+**/outputs/**/*.jpeg
+
+# ------------------------------------------------------------------------------
+# 6. Logging, Metric Trackers & TensorBoard
+# ------------------------------------------------------------------------------
+*.log
+runs/
+**/runs/
+wandb/
+mlruns/
+lightning_logs/
+events.out.tfevents.*
+.tensorboard/
+
+# ------------------------------------------------------------------------------
+# 7. Jupyter Notebook & IDE Configuration
+# ------------------------------------------------------------------------------
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# VS Code / Cursor / PyCharm / Antigravity
+.vscode/
+.idea/
+.cursor/
+.gemini/
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------------------------------------------
+# 8. Operating System Metadata
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/

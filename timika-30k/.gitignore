@@ -1,0 +1,86 @@
+# ==============================================================================
+# Git Ignore Configuration: Timika-30k Project Subdirectory
+# ==============================================================================
+
+# 1. Bytecode & Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 2. Virtual Environments
+.env
+.venv
+env/
+venv/
+build/
+dist/
+*.egg-info/
+
+# 3. Model Weights & Checkpoints (Ignore all binaries, track CSV logs)
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.onnx
+*.engine
+*.h5
+*.hdf5
+*.safetensors
+checkpoints/**/*.pth
+checkpoints/**/*.pt
+checkpoints/**/*.ckpt
+checkpoints/**/*.bin
+checkpoints/**/*.safetensors
+
+# 4. Large Datasets & Imaging Folders
+data/
+preprocessed_bone_suppressed/
+preprocessed_bone_suppression_clahe/
+preprocessed_clahe/
+labels/
+preprocessed_labels/
+experiments/nnunet/
+experiments/nnunet_raw/
+
+# Medical imaging formats & archives
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.mhd
+*.raw
+*.npy
+*.npz
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.bz2
+
+# 5. Heavy Visualization Card Dumps
+experiments/outputs/**/visualizations/
+experiments/outputs/**/*.png
+experiments/outputs/**/*.jpg
+
+# 6. Logs & Runs
+*.log
+runs/
+wandb/
+mlruns/
+lightning_logs/
+events.out.tfevents.*
+
+# 7. IDE & OS files
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.cursor/
+.gemini/
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
