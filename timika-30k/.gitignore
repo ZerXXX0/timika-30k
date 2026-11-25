@@ -38,14 +38,21 @@ checkpoints/**/*.bin
 checkpoints/**/*.safetensors
 
 # 4. Large Datasets & Imaging Folders
-data/
-preprocessed_bone_suppressed/
-preprocessed_bone_suppression_clahe/
-preprocessed_clahe/
-labels/
-preprocessed_labels/
-experiments/nnunet/
+# Anchored with a leading "/" so they only match the top-level dataset folders of this project.
+# (An unanchored "data/" also matched the source package experiments/data/.)
+/data/
+/preprocessed_bone_suppressed/
+/preprocessed_bone_suppression_clahe/
+/preprocessed_clahe/
+/labels/
+/preprocessed_labels/
 experiments/nnunet_raw/
+
+# Source code that must stay tracked. The repo-root .gitignore has unanchored rules
+# (data/, **/data/, nnunet/, **/nnunet/) that would otherwise hide these; patterns in this
+# lower-level file take precedence over the ones in the parent directory.
+!experiments/data/
+!experiments/nnunet/
 
 # Medical imaging formats & archives
 *.dcm
@@ -62,10 +69,16 @@ experiments/nnunet_raw/
 *.7z
 *.bz2
 
-# 5. Heavy Visualization Card Dumps
+# 5. Heavy Visualization Card Dumps & Inference Dumps
+# Bulk per-image outputs (masks, overlays, cards) are ignored; small summaries stay trackable:
+# *.csv, *.json, *.html under experiments/outputs/ (e.g. probabilitas_maks_sigmoid.csv,
+# info_inferensi.json, info_inferensi.csv, test_inference_summary.csv).
 experiments/outputs/**/visualizations/
+experiments/outputs/**/predicted_masks/
+experiments/outputs/**/overlay/
 experiments/outputs/**/*.png
 experiments/outputs/**/*.jpg
+experiments/outputs/**/*.jpeg
 
 # 6. Logs & Runs
 *.log

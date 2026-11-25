@@ -1,0 +1,97 @@
+{
+  "nomor": 3,
+  "model": "unetplusplus",
+  "encoder": "resnet34",
+  "bentuk_citra_masukan": "Citra contrast",
+  "folder_citra": "C:\\Gojiii\\timika-30k\\timika-30k\\preprocessed_clahe\\images",
+  "checkpoint": "C:\\Gojiii\\timika-30k\\timika-30k\\experiments\\checkpoints\\unetplusplus_resnet34_clahe\\best_model.pth",
+  "checkpoint_epoch": 33,
+  "checkpoint_val_macro_dice": 0.392253412207551,
+  "jumlah_citra": 553,
+  "ukuran_masukan": [
+    512,
+    512
+  ],
+  "ambang_sigmoid": 0.5,
+  "komponen_dihapus_kurang_dari_piksel": 30,
+  "presisi": "fp16",
+  "kelas_disimpan": [
+    "atelectasis",
+    "infiltrate",
+    "pleural_effusion",
+    "pneumothorax"
+  ],
+  "metrik_evaluasi": {
+    "jumlah_citra": 553,
+    "per_kelas": {
+      "atelectasis": {
+        "n_citra": 553,
+        "n_citra_positif": 48,
+        "dice": 0.23792463927177082,
+        "iou": 0.1350252347850803,
+        "precision": 0.2682503901881777,
+        "recall": 0.21375913390878076,
+        "dice_per_citra": 0.6563362252601542,
+        "iou_per_citra": 0.6469736299692495,
+        "dice_per_citra_positif": 0.3740400695510671,
+        "sens_citra": 0.8333333333333334,
+        "spes_citra": 0.6831683168316832,
+        "auroc_citra": 0.8529084158415842
+      },
+      "infiltrate": {
+        "n_citra": 553,
+        "n_citra_positif": 293,
+        "dice": 0.6454899092441645,
+        "iou": 0.4765486161010447,
+        "precision": 0.6615675035424793,
+        "recall": 0.6301752188299999,
+        "dice_per_citra": 0.541890672358804,
+        "iou_per_citra": 0.47698925645140605,
+        "dice_per_citra_positif": 0.5619984284008337,
+        "sens_citra": 0.9556313993174061,
+        "spes_citra": 0.5192307692307693,
+        "auroc_citra": 0.8737595169335783
+      },
+      "pleural_effusion": {
+        "n_citra": 553,
+        "n_citra_positif": 256,
+        "dice": 0.5852624003811456,
+        "iou": 0.41368971923810266,
+        "precision": 0.6463249635811166,
+        "recall": 0.5347418286178546,
+        "dice_per_citra": 0.571313897531819,
+        "iou_per_citra": 0.5094702565028966,
+        "dice_per_citra_positif": 0.5544397630799338,
+        "sens_citra": 0.98046875,
+        "spes_citra": 0.5858585858585859,
+        "auroc_citra": 0.9108007154882155
+      },
+      "pneumothorax": {
+        "n_citra": 553,
+        "n_citra_positif": 35,
+        "dice": 0.4385577843098929,
+        "iou": 0.28086712395606095,
+        "precision": 0.32503740653188196,
+        "recall": 0.6739300646062357,
+        "dice_per_citra": 0.7800609684953301,
+        "iou_per_citra": 0.772193639148713,
+        "dice_per_citra_positif": 0.49639169172020825,
+        "sens_citra": 0.9428571428571428,
+        "spes_citra": 0.7992277992277992,
+        "auroc_citra": 0.9504964147821291
+      }
+    },
+    "makro": {
+      "dice": 0.4768086833017434,
+      "iou": 0.32653267352007215,
+      "precision": 0.47529506596091387,
+      "recall": 0.5131515614907177,
+      "dice_per_citra": 0.6374004409115268,
+      "iou_per_citra": 0.6014066955180662,
+      "dice_per_citra_positif": 0.4967174881880107,
+      "sens_citra": 0.9280726563769706,
+      "spes_citra": 0.6468713677872093,
+      "auroc_citra": 0.8969912657613768
+    }
+  }
+}
