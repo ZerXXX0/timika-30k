@@ -1,4 +1,4 @@
-from experiments.losses.compound_loss import (
+from timika.losses.compound_loss import (
     MaskedMultiLabelBCEDiceLoss,
     MaskedFocalTverskyLoss,
 )

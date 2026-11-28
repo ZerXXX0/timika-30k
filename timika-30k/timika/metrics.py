@@ -7,7 +7,7 @@ from typing import Dict, List
 import numpy as np
 import torch
 
-from experiments.config import DISEASE_CLASSES
+from timika.config import DISEASE_CLASSES
 
 
 class SegmentationMetricTracker:

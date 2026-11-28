@@ -13,13 +13,13 @@ from PIL import Image
 import torch
 from torch.utils.data import Dataset
 
-from experiments.config import (
+from timika.config import (
     SCENARIOS,
     DISEASE_CLASSES,
     LABELS_DISEASE_DIR,
     LABELS_MANIFEST,
 )
-from experiments.data.transforms import get_transforms
+from timika.datasets.transforms import get_transforms
 
 
 class TimikaDiseaseDataset(Dataset):

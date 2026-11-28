@@ -6,21 +6,17 @@ Untuk setiap citra pada setiap inferensi dibuat satu gambar tiga panel:
 dengan warna per kelas (atelectasis, infiltrate, pleural_effusion, pneumothorax), kontur, dan
 nilai Dice per kelas pada legenda bagian bawah.
 
-Membaca keluaran experiments/inference_skema_ghozy.py dan menulis ke:
+Membaca keluaran timika/cli/schema_infer.py dan menulis ke:
     <output-dir>/<nama-inferensi>/overlay/<id_citra>.png
 
-Contoh:
-    python experiments/overlay_skema_ghozy.py
-    python experiments/overlay_skema_ghozy.py --runs 1 --limit 10
-    python experiments/overlay_skema_ghozy.py --format jpg        # berkas jauh lebih kecil
+Contoh (dijalankan dari root proyek):
+    python -m timika.cli.schema_overlay
+    python -m timika.cli.schema_overlay --runs 1 --limit 10
+    python -m timika.cli.schema_overlay --format jpg        # berkas jauh lebih kecil
 """
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import argparse
+import os
 import time
 
 import cv2
@@ -28,9 +24,9 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from experiments.config import DISEASE_CLASSES, LABELS_DISEASE_DIR, SCENARIOS
-from experiments.inference_sample import render_composite_card
-from experiments.inference_skema_ghozy import DEFAULT_OUTPUT_DIR, RUNS, SAVED_CLASSES
+from timika.config import DISEASE_CLASSES, LABELS_DISEASE_DIR, SCENARIOS
+from timika.inference_schema import DEFAULT_OUTPUT_DIR, RUNS, SAVED_CLASSES
+from timika.visualization import render_composite_card
 
 SMOOTH = 1e-5
 
@@ -68,7 +64,7 @@ def main():
         run_dir = os.path.join(args.output_dir, spec.name)
         prob_csv = os.path.join(run_dir, "probabilitas_maks_sigmoid.csv")
         if not os.path.isfile(prob_csv):
-            raise SystemExit(f"Keluaran inferensi {spec.number} tidak ditemukan di {run_dir}. Jalankan inference_skema_ghozy.py dahulu.")
+            raise SystemExit(f"Keluaran inferensi {spec.number} tidak ditemukan di {run_dir}. Jalankan timika.cli.schema_infer dahulu.")
 
         ids = pd.read_csv(prob_csv)["id_citra"].astype(str).tolist()
         if args.limit is not None:

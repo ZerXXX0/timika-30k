@@ -1,14 +1,14 @@
 """
 Evaluasi hasil inferensi skema_inferensi_ghozy-261125 terhadap ground truth.
 
-Membaca keluaran dari experiments/inference_skema_ghozy.py:
+Membaca keluaran dari timika/cli/schema_infer.py:
     <output-dir>/<nama-inferensi>/predicted_masks/<id_citra>/<kelas>.png
     <output-dir>/<nama-inferensi>/probabilitas_maks_sigmoid.csv
 dan membandingkannya dengan mask ground truth di preprocessed_labels/disease/<kelas>/<id_citra>.
 
 Metrik per kelas (empat kelas yang disimpan) dan rata-rata makro:
     dice, iou, precision, recall   dihitung dari TP/FP/FN yang dijumlahkan pada seluruh citra
-                                   (definisi yang sama dengan validasi pada experiments/metrics.py)
+                                   (definisi yang sama dengan validasi pada timika/metrics.py)
     dice_per_citra, iou_per_citra  rata-rata Dice / IoU per citra pada seluruh citra
                                    (citra tanpa temuan dan tanpa prediksi bernilai 1.0)
     dice_per_citra_positif         rata-rata Dice per citra hanya pada citra yang memiliki temuan pada GT
@@ -19,18 +19,14 @@ Hasil ditulis ke:
     <output-dir>/<nama-inferensi>/info_inferensi.json   (kunci "metrik_evaluasi")
     <output-dir>/info_inferensi.csv                     (satu baris per inferensi dan kelas, plus baris MAKRO)
 
-Contoh:
-    python experiments/evaluate_skema_ghozy.py
-    python experiments/evaluate_skema_ghozy.py --runs 1 2
+Contoh (dijalankan dari root proyek):
+    python -m timika.cli.schema_evaluate
+    python -m timika.cli.schema_evaluate --runs 1 2
 """
-
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import argparse
 import json
+import os
 from typing import Dict, List
 
 import cv2
@@ -38,10 +34,10 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from experiments.config import LABELS_DISEASE_DIR
-from experiments.inference_skema_ghozy import DEFAULT_OUTPUT_DIR, RUNS, SAVED_CLASSES
+from timika.config import LABELS_DISEASE_DIR
+from timika.inference_schema import DEFAULT_OUTPUT_DIR, RUNS, SAVED_CLASSES
 
-SMOOTH = 1e-5  # sama dengan experiments/metrics.py
+SMOOTH = 1e-5  # sama dengan timika/metrics.py
 METRIC_KEYS = [
     "dice", "iou", "precision", "recall",
     "dice_per_citra", "iou_per_citra", "dice_per_citra_positif",
@@ -136,7 +132,7 @@ def main():
     for spec in specs:
         run_dir = os.path.join(args.output_dir, spec.name)
         if not os.path.isfile(os.path.join(run_dir, "probabilitas_maks_sigmoid.csv")):
-            raise SystemExit(f"Keluaran inferensi {spec.number} tidak ditemukan di {run_dir}. Jalankan inference_skema_ghozy.py dahulu.")
+            raise SystemExit(f"Keluaran inferensi {spec.number} tidak ditemukan di {run_dir}. Jalankan timika.cli.schema_infer dahulu.")
 
         print(f"Mengevaluasi inferensi {spec.number}: {spec.name} ...")
         result = evaluate_run(run_dir)

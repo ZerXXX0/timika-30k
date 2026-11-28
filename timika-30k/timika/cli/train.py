@@ -2,17 +2,15 @@
 Unified Training Script for Multi-Model CXR Segmentation.
 Models: U-Net++, FPN, SegFormer (MiT)
 Scenarios: CLAHE, Bone-Suppressed, Bone-Suppression + CLAHE
+
+Usage (from the project root):
+    python -m timika.cli.train --model segformer --scenario bone_suppressed
+Checkpoints and training_history.csv are written to checkpoints/<model>_<encoder>_<scenario>/.
 """
 
-import os
-import sys
-
-# Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import argparse
+import os
 import time
-from typing import Dict
 
 import pandas as pd
 import torch
@@ -20,14 +18,14 @@ from torch.utils.data import DataLoader
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
-from experiments.config import Hyperparameters, SCENARIOS, DISEASE_CLASSES
-from experiments.data.dataset import TimikaDiseaseDataset
-from experiments.losses.compound_loss import (
+from timika.config import CHECKPOINTS_DIR, SCENARIOS, DISEASE_CLASSES, experiment_name
+from timika.datasets.dataset import TimikaDiseaseDataset
+from timika.losses.compound_loss import (
     MaskedMultiLabelBCEDiceLoss,
     MaskedFocalTverskyLoss,
 )
-from experiments.models.factory import build_model
-from experiments.metrics import SegmentationMetricTracker
+from timika.models.factory import build_model
+from timika.metrics import SegmentationMetricTracker
 
 
 def parse_args():
@@ -116,16 +114,16 @@ def main():
         else:
             args.encoder = "resnet34"
 
-    experiment_name = f"{args.model}_{args.encoder}_{args.scenario}"
+    exp_name = experiment_name(args.model, args.encoder, args.scenario)
     print(f"\n{'='*70}")
-    print(f"EXPERIMENT: {experiment_name}")
+    print(f"EXPERIMENT: {exp_name}")
     print(f"Model: {args.model.upper()} | Encoder: {args.encoder} | Scenario: {SCENARIOS[args.scenario]['name']}")
     print(f"Batch Size: {args.batch_size} | LR: {args.lr} | Epochs: {args.epochs} | Loss: {args.loss}")
     print(f"Device: {args.device}")
     print(f"{'='*70}\n")
 
     # Save directories
-    checkpoints_dir = os.path.join("experiments", "checkpoints", experiment_name)
+    checkpoints_dir = os.path.join(CHECKPOINTS_DIR, exp_name)
     os.makedirs(checkpoints_dir, exist_ok=True)
 
     # 1. Datasets and Loaders

@@ -1,14 +1,13 @@
 """
 nnU-Net v2 Dataset Preparation Script for Timika CXR Segmentation.
 Converts any of the 3 scenarios into official nnU-Net v2 directory structure and dataset.json.
+
+Usage (from the project root):
+    python -m timika.cli.prepare_nnunet --scenario bone_suppression_clahe
+Output: outputs/nnunet_raw/Dataset<id>_Timika_<scenario>_<task>/
 """
 
 import os
-import sys
-
-# Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
 import json
 import shutil
 import argparse
@@ -16,7 +15,7 @@ import pandas as pd
 from PIL import Image
 import numpy as np
 
-from experiments.config import SCENARIOS, LABELS_DISEASE_DIR, LABELS_MANIFEST, PROJECT_ROOT
+from timika.config import SCENARIOS, LABELS_DISEASE_DIR, OUTPUTS_DIR
 
 
 def parse_args():
@@ -35,7 +34,7 @@ def main():
     scenario_cfg = SCENARIOS[args.scenario]
     dataset_name = f"Dataset{args.dataset_id:03d}_Timika_{args.scenario}_{args.task_type}"
 
-    base_dir = args.output_base or os.path.join(PROJECT_ROOT, "experiments", "nnunet_raw")
+    base_dir = args.output_base or os.path.join(OUTPUTS_DIR, "nnunet_raw")
     dataset_dir = os.path.join(base_dir, dataset_name)
 
     images_tr = os.path.join(dataset_dir, "imagesTr")

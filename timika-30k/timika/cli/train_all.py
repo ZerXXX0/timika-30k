@@ -1,6 +1,9 @@
 """
 Automated Batch Runner: Trains a Model across All 3 Preprocessing Scenarios Sequentially
 and Automatically Generates Test Inference Samples & Gallery for Each.
+
+Usage (from the project root):
+    python -m timika.cli.train_all --model unetplusplus --epochs 40
 """
 
 import os
@@ -9,10 +12,7 @@ import subprocess
 import argparse
 import pandas as pd
 
-# Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from experiments.config import SCENARIOS
+from timika.config import CHECKPOINTS_DIR, PROJECT_ROOT, SCENARIOS, experiment_name
 
 
 def parse_args():
@@ -48,7 +48,7 @@ def main():
         # 1. Run Training
         train_cmd = [
             args.python_bin,
-            "experiments/train.py",
+            "-m", "timika.cli.train",
             "--model", args.model,
             "--encoder", args.encoder,
             "--scenario", scenario,
@@ -56,15 +56,15 @@ def main():
             "--epochs", str(args.epochs),
         ]
         print(f"Running command: {' '.join(train_cmd)}")
-        ret = subprocess.run(train_cmd)
+        ret = subprocess.run(train_cmd, cwd=PROJECT_ROOT)
         if ret.returncode != 0:
             print(f"[ERROR] Training failed for scenario {scenario} with exit code {ret.returncode}")
             continue
 
         # 2. Check for checkpoint
-        exp_name = f"{args.model}_{args.encoder}_{scenario}"
-        ckpt_path = os.path.join("experiments", "checkpoints", exp_name, "best_model.pth")
-        history_path = os.path.join("experiments", "checkpoints", exp_name, "training_history.csv")
+        exp_name = experiment_name(args.model, args.encoder, scenario)
+        ckpt_path = os.path.join(CHECKPOINTS_DIR, exp_name, "best_model.pth")
+        history_path = os.path.join(CHECKPOINTS_DIR, exp_name, "training_history.csv")
 
         best_dice = 0.0
         best_epoch = 0
@@ -86,14 +86,14 @@ def main():
             print(f"\n[INFERENCE] Generating {args.num_samples} test samples for {exp_name}...")
             infer_cmd = [
                 args.python_bin,
-                "experiments/inference_sample.py",
+                "-m", "timika.cli.infer_samples",
                 "--checkpoint", ckpt_path,
                 "--model", args.model,
                 "--encoder", args.encoder,
                 "--scenario", scenario,
                 "--num-samples", str(args.num_samples),
             ]
-            subprocess.run(infer_cmd)
+            subprocess.run(infer_cmd, cwd=PROJECT_ROOT)
 
     # Final summary table
     print("\n" + "=" * 80)

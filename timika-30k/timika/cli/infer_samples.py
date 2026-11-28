@@ -2,33 +2,32 @@
 Inference & Visualization Pipeline for 50-100 Test Samples.
 Outputs side-by-side composite images: [Original CXR] | [Ground Truth] | [Predicted Masks]
 Generates per-image metrics and an interactive HTML visual inspection gallery.
+
+Usage (from the project root):
+    python -m timika.cli.infer_samples --model unetplusplus --scenario bone_suppressed \
+        --checkpoint checkpoints/unetplusplus_resnet34_bone_suppressed/best_model.pth
+Output: outputs/<model>_<encoder>_<scenario>/{visualizations/, predicted_masks/, test_inference_summary.csv, gallery.html}
 """
 
-import os
-import sys
-
-# Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import argparse
+import os
 import random
-from typing import Dict, List, Tuple
 
 import cv2
 import numpy as np
 import pandas as pd
-from PIL import Image
 import torch
-import torch.nn.functional as F
 
-from experiments.config import (
+from timika.config import (
     DISEASE_CLASSES,
-    CLASS_COLORS,
+    LABELS_MANIFEST,
+    OUTPUTS_DIR,
     SCENARIOS,
-    PROJECT_ROOT,
+    experiment_name,
 )
-from experiments.data.dataset import TimikaDiseaseDataset
-from experiments.models.factory import build_model
+from timika.datasets.dataset import TimikaDiseaseDataset
+from timika.models.factory import build_model
+from timika.visualization import render_composite_card
 
 
 def parse_args():
@@ -58,105 +57,6 @@ def filter_tiny_components(mask: np.ndarray, min_size: int = 30) -> np.ndarray:
     return cleaned
 
 
-def create_color_overlay(
-    base_gray: np.ndarray,
-    masks: np.ndarray,
-    class_names: List[str] = DISEASE_CLASSES,
-    alpha: float = 0.45,
-) -> np.ndarray:
-    """
-    Renders multi-label color overlays with contours on top of grayscale CXR.
-    Args:
-        base_gray: (H, W) uint8 grayscale image [0..255]
-        masks: (C, H, W) binary float array [0 or 1]
-    """
-    rgb = cv2.cvtColor(base_gray, cv2.COLOR_GRAY2RGB)
-    overlay = rgb.copy()
-
-    for c, cls_name in enumerate(class_names):
-        mask_c = masks[c]
-        if mask_c.sum() > 0:
-            color = CLASS_COLORS.get(cls_name, (255, 255, 0))
-            # Colored fill
-            overlay[mask_c > 0.5] = color
-
-    blended = cv2.addWeighted(overlay, alpha, rgb, 1.0 - alpha, 0)
-
-    # Draw solid contour boundary lines for high contrast
-    for c, cls_name in enumerate(class_names):
-        mask_c = masks[c].astype(np.uint8)
-        if mask_c.sum() > 0:
-            color = CLASS_COLORS.get(cls_name, (255, 255, 0))
-            contours, _ = cv2.findContours(mask_c, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(blended, contours, -1, color, 2)
-
-    return blended
-
-
-def render_composite_card(
-    base_gray: np.ndarray,
-    gt_masks: np.ndarray,
-    pred_masks: np.ndarray,
-    image_id: str,
-    patient_id: str,
-    source: str,
-    per_class_metrics: Dict[str, float],
-) -> np.ndarray:
-    """
-    Assembles a 3-panel comparison: [Original CXR] | [Ground Truth] | [Predicted Masks]
-    with an informative header and color-coded pathology legend.
-    """
-    h, w = base_gray.shape
-
-    # 1. Base RGB
-    panel_orig = cv2.cvtColor(base_gray, cv2.COLOR_GRAY2RGB)
-
-    # 2. Ground Truth Overlay
-    panel_gt = create_color_overlay(base_gray, gt_masks)
-
-    # 3. Prediction Overlay
-    panel_pred = create_color_overlay(base_gray, pred_masks)
-
-    # Header Bar & Canvas Dimensions
-    header_h = 70
-    pad = 16
-    canvas_w = pad * 4 + w * 3
-    canvas_h = h + header_h + 30
-    canvas = np.ones((canvas_h, canvas_w, 3), dtype=np.uint8) * 35  # Dark slate background
-
-    # Title & Metadata
-    title_text = f"Sample: {image_id}  |  Patient: {patient_id}  |  Source: {source.upper()}"
-    cv2.putText(canvas, title_text, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (240, 240, 240), 2, cv2.LINE_AA)
-
-    # Panel Sub-headers
-    cv2.putText(canvas, "Input CXR", (pad, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (180, 180, 180), 2, cv2.LINE_AA)
-    cv2.putText(canvas, "Ground Truth", (pad * 2 + w, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (180, 180, 180), 2, cv2.LINE_AA)
-    cv2.putText(canvas, "Model Prediction", (pad * 3 + w * 2, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (180, 180, 180), 2, cv2.LINE_AA)
-
-    # Place Panels
-    canvas[header_h : header_h + h, pad : pad + w] = panel_orig
-    canvas[header_h : header_h + h, pad * 2 + w : pad * 2 + w * 2] = panel_gt
-    canvas[header_h : header_h + h, pad * 3 + w * 2 : pad * 3 + w * 3] = panel_pred
-
-    # Footer legend for active findings
-    footer_y = header_h + h + 22
-    x_offset = 20
-    for cls_name in DISEASE_CLASSES:
-        c_idx = DISEASE_CLASSES.index(cls_name)
-        gt_present = gt_masks[c_idx].sum() > 0
-        pred_present = pred_masks[c_idx].sum() > 0
-        if gt_present or pred_present:
-            color = CLASS_COLORS.get(cls_name, (255, 255, 255))
-            dice_val = per_class_metrics.get(f"{cls_name}_dice", 0.0)
-            tag = f"{cls_name.upper()} (Dice: {dice_val:.2f})"
-            # Draw color pill
-            cv2.circle(canvas, (x_offset + 8, footer_y - 5), 7, color, -1)
-            cv2.putText(canvas, tag, (x_offset + 22, footer_y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (230, 230, 230), 1, cv2.LINE_AA)
-            x_offset += len(tag) * 11 + 35
-
-    return canvas
-
-
 def main():
     args = parse_args()
     random.seed(args.seed)
@@ -167,9 +67,9 @@ def main():
         args.encoder = "mit_b3" if args.model == "segformer" else "resnet34"
 
     # Output directory
-    exp_name = f"{args.model}_{args.encoder}_{args.scenario}"
+    exp_name = experiment_name(args.model, args.encoder, args.scenario)
     if args.output_dir is None:
-        args.output_dir = os.path.join(PROJECT_ROOT, "experiments", "outputs", exp_name)
+        args.output_dir = os.path.join(OUTPUTS_DIR, exp_name)
 
     vis_dir = os.path.join(args.output_dir, "visualizations")
     masks_dir = os.path.join(args.output_dir, "predicted_masks")
@@ -194,7 +94,7 @@ def main():
     # Select representative 50-100 test samples (prioritizing diverse positive cases and negatives)
     # Use pre-loaded manifest to do instantaneous stratification
     print("Stratifying test set samples via manifest metadata...")
-    df_lbl = pd.read_csv(os.path.join(PROJECT_ROOT, "preprocessed_labels", "disease", "manifest.csv"))
+    df_lbl = pd.read_csv(LABELS_MANIFEST)
     known_pos_ids = set(df_lbl[df_lbl["positive"] == True]["id"])
 
     positive_indices = []

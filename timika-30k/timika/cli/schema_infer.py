@@ -1,8 +1,8 @@
 """
-Inferensi sesuai "Skema Inferensi Model Timika-30K" (for prompt/skema_inferensi_ghozy-261125.md).
+Inferensi sesuai "Skema Inferensi Model Timika-30K" (docs/inference_schema_ghozy-261125.md).
 
 Empat inferensi pada 553 citra uji ChestX-Det (daftar id pada
-for prompt/daftar_citra_uji_chestxdet-261125.csv):
+splits/daftar_citra_uji_chestxdet-261125.csv):
 
     1  SegFormer (mit_b3)       citra bone              -> preprocessed_bone_suppressed/images
     2  U-Net++ (resnet34)       citra bone              -> preprocessed_bone_suppressed/images
@@ -12,28 +12,23 @@ for prompt/daftar_citra_uji_chestxdet-261125.csv):
 Pengaturan: checkpoint epoch terbaik (best_model.pth), masukan 512x512 satu kanal abu-abu,
 ambang sigmoid 0.5, komponen terhubung < 30 piksel dihapus, fp16, dan hanya empat kelas
 yang disimpan: atelectasis, infiltrate, pleural_effusion, pneumothorax.
+Definisi keempat inferensi ada di timika/inference_schema.py.
 
 Keluaran per inferensi (di dalam <output-dir>/<nama-inferensi>/):
     predicted_masks/<id_citra>/<kelas>.png   PNG biner 512x512 (0 / 255), satu per citra dan per kelas
     probabilitas_maks_sigmoid.csv            satu baris per citra, nilai sigmoid tertinggi per kelas
     info_inferensi.json                      pengaturan dan checkpoint yang dipakai
 
-Contoh:
-    python experiments/inference_skema_ghozy.py                    # keempat inferensi
-    python experiments/inference_skema_ghozy.py --runs 1 3         # hanya inferensi 1 dan 3
-    python experiments/inference_skema_ghozy.py --limit 8          # uji cepat pada 8 citra pertama
+Contoh (dijalankan dari root proyek):
+    python -m timika.cli.schema_infer                    # keempat inferensi
+    python -m timika.cli.schema_infer --runs 1 3         # hanya inferensi 1 dan 3
+    python -m timika.cli.schema_infer --limit 8          # uji cepat pada 8 citra pertama
 """
-
-import os
-import sys
-
-# Pastikan root proyek ada di sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import argparse
 import json
+import os
 import time
-from dataclasses import dataclass
 from typing import List
 
 import cv2
@@ -43,33 +38,18 @@ import torch
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
-from experiments.config import DISEASE_CLASSES, PROJECT_ROOT, SCENARIOS
-from experiments.data.transforms import get_transforms
-from experiments.models.factory import build_model
-
-SAVED_CLASSES = ["atelectasis", "infiltrate", "pleural_effusion", "pneumothorax"]
-SAVED_IDX = [DISEASE_CLASSES.index(c) for c in SAVED_CLASSES]
-
-DEFAULT_ID_LIST = os.path.join(PROJECT_ROOT, "for prompt", "daftar_citra_uji_chestxdet-261125.csv")
-DEFAULT_OUTPUT_DIR = os.path.join(PROJECT_ROOT, "experiments", "outputs", "inferensi_ghozy-261125")
-
-
-@dataclass(frozen=True)
-class RunSpec:
-    number: int
-    name: str
-    model: str
-    encoder: str
-    scenario: str  # kunci pada config.SCENARIOS
-    input_form: str
-
-
-RUNS = [
-    RunSpec(1, "1_segformer_bone", "segformer", "mit_b3", "bone_suppressed", "Citra bone"),
-    RunSpec(2, "2_unetpp_bone", "unetplusplus", "resnet34", "bone_suppressed", "Citra bone"),
-    RunSpec(3, "3_unetpp_contrast", "unetplusplus", "resnet34", "clahe", "Citra contrast"),
-    RunSpec(4, "4_unetpp_bone_contrast", "unetplusplus", "resnet34", "bone_suppression_clahe", "Citra bone and contrast"),
-]
+from timika.config import DISEASE_CLASSES, SCENARIOS
+from timika.datasets.transforms import get_transforms
+from timika.inference_schema import (
+    DEFAULT_ID_LIST,
+    DEFAULT_OUTPUT_DIR,
+    RUNS,
+    SAVED_CLASSES,
+    SAVED_IDX,
+    RunSpec,
+    checkpoint_path,
+)
+from timika.models.factory import build_model
 
 
 def parse_args():
@@ -85,11 +65,6 @@ def parse_args():
     p.add_argument("--limit", type=int, default=None, help="Hanya proses N citra pertama (uji cepat)")
     p.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     return p.parse_args()
-
-
-def checkpoint_path(spec: RunSpec) -> str:
-    exp_name = f"{spec.model}_{spec.encoder}_{spec.scenario}"
-    return os.path.join(PROJECT_ROOT, "experiments", "checkpoints", exp_name, "best_model.pth")
 
 
 class IdListDataset(Dataset):

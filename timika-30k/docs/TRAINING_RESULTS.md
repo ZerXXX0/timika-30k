@@ -191,13 +191,13 @@ Objective Function:
 
 | Asset Description | Disk Location | Details |
 | :--- | :--- | :--- |
-| **Interactive Test Gallery (BS)** | [`gallery.html`](file:///c:/Gojiii/timika-30k/timika-30k/experiments/outputs/unetplusplus_resnet34_bone_suppressed/gallery.html) | Card browser with dynamic filtering for all 75 test samples |
-| **Visual Sample PNG Cards** | `experiments/outputs/unetplusplus_resnet34_bone_suppressed/visualizations/` | 75 three-panel composites: `[Input] | [Ground Truth] | [Prediction]` |
-| **Per-Sample Metrics CSV** | [`test_inference_summary.csv`](file:///c:/Gojiii/timika-30k/timika-30k/experiments/outputs/unetplusplus_resnet34_bone_suppressed/test_inference_summary.csv) | Per-case Dice, IoU, and metadata across 75 test cases |
-| **SegFormer Best Weights** | `experiments/checkpoints/segformer_mit_b3_bone_suppressed/best_model.pth` | Top-performing checkpoint overall (**0.4297 Val Dice**) |
-| **U-Net++ Best Weights** | `experiments/checkpoints/unetplusplus_resnet34_bone_suppressed/best_model.pth` | Top CNN checkpoint (**0.4028 Val Dice**, 40 epochs) |
-| **U-Net++ CLAHE Weights** | `experiments/checkpoints/unetplusplus_resnet34_clahe/best_model.pth` | Baseline CLAHE checkpoint (**0.3923 Val Dice**) |
-| **Training Histories** | `experiments/checkpoints/*/training_history.csv` | Full epoch logs with losses, learning rates, and class metrics |
+| **Interactive Test Gallery (BS)** | [`gallery.html`](../outputs/unetplusplus_resnet34_bone_suppressed/gallery.html) | Card browser with dynamic filtering for all 75 test samples |
+| **Visual Sample PNG Cards** | `outputs/unetplusplus_resnet34_bone_suppressed/visualizations/` | 75 three-panel composites: `[Input] | [Ground Truth] | [Prediction]` |
+| **Per-Sample Metrics CSV** | [`test_inference_summary.csv`](../outputs/unetplusplus_resnet34_bone_suppressed/test_inference_summary.csv) | Per-case Dice, IoU, and metadata across 75 test cases |
+| **SegFormer Best Weights** | `checkpoints/segformer_mit_b3_bone_suppressed/best_model.pth` | Top-performing checkpoint overall (**0.4297 Val Dice**) |
+| **U-Net++ Best Weights** | `checkpoints/unetplusplus_resnet34_bone_suppressed/best_model.pth` | Top CNN checkpoint (**0.4028 Val Dice**, 40 epochs) |
+| **U-Net++ CLAHE Weights** | `checkpoints/unetplusplus_resnet34_clahe/best_model.pth` | Baseline CLAHE checkpoint (**0.3923 Val Dice**) |
+| **Training Histories** | `checkpoints/*/training_history.csv` | Full epoch logs with losses, learning rates, and class metrics |
 
 ---
 

@@ -8,9 +8,13 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
-# Base directories
+# Base directories (all derived from this file's location, so commands work from any working directory)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATASET_BASE = PROJECT_ROOT
+CHECKPOINTS_DIR = os.path.join(PROJECT_ROOT, "checkpoints")  # <model>_<encoder>_<scenario>/best_model.pth
+OUTPUTS_DIR = os.path.join(PROJECT_ROOT, "outputs")          # inference samples, schema runs, nnU-Net raw data
+SPLITS_DIR = os.path.join(PROJECT_ROOT, "splits")            # image-id lists (e.g. the 553 ChestX-Det test images)
+DOCS_DIR = os.path.join(PROJECT_ROOT, "docs")
 
 # Disease classes in timika dataset (7 multi-label classes)
 DISEASE_CLASSES = [
@@ -61,6 +65,11 @@ LABELS_DISEASE_DIR = os.path.join(DATASET_BASE, "preprocessed_labels", "disease"
 LABELS_MANIFEST = os.path.join(LABELS_DISEASE_DIR, "manifest.csv")
 
 
+def experiment_name(model: str, encoder: str, scenario: str) -> str:
+    """Folder name used for an experiment under checkpoints/ and outputs/."""
+    return f"{model}_{encoder}_{scenario}"
+
+
 @dataclass
 class Hyperparameters:
     """Explicit Hyperparameter Specifications for Training and Inference."""
@@ -106,8 +115,8 @@ class Hyperparameters:
 
     # 7. Inference Sampling Output
     num_inference_samples: int = 75  # Target 50-100 images from test set
-    output_dir: str = os.path.join(PROJECT_ROOT, "experiments", "outputs")
-    checkpoints_dir: str = os.path.join(PROJECT_ROOT, "experiments", "checkpoints")
+    output_dir: str = OUTPUTS_DIR
+    checkpoints_dir: str = CHECKPOINTS_DIR
 
     def to_dict(self) -> Dict:
         return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}

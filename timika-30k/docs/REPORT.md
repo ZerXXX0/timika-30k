@@ -158,13 +158,13 @@ Loss Formulation:
 
 | Resource | File Location | Purpose |
 | :--- | :--- | :--- |
-| **Comprehensive Summary** | [`TRAINING_RESULTS.md`](file:///c:/Gojiii/timika-30k/timika-30k/TRAINING_RESULTS.md) | Exhaustive multi-model report & clinical synthesis |
-| **Interactive Gallery** | [`gallery.html`](file:///c:/Gojiii/timika-30k/timika-30k/experiments/outputs/unetplusplus_resnet34_bone_suppressed/gallery.html) | Visual card browser for all 75 test samples |
-| **Sample Cards (PNG)** | `experiments/outputs/unetplusplus_resnet34_bone_suppressed/visualizations/` | `[Input] | [Ground Truth] | [Prediction]` cards |
-| **Test Metrics CSV** | [`test_inference_summary.csv`](file:///c:/Gojiii/timika-30k/timika-30k/experiments/outputs/unetplusplus_resnet34_bone_suppressed/test_inference_summary.csv) | Per-sample Dice & IoU scores |
-| **SegFormer Best Weights** | `experiments/checkpoints/segformer_mit_b3_bone_suppressed/best_model.pth` | Top overall model checkpoint (**0.4297 Dice**) |
-| **U-Net++ Best Weights** | `experiments/checkpoints/unetplusplus_resnet34_bone_suppressed/best_model.pth` | Top CNN model checkpoint (**0.4028 Dice**) |
-| **Epoch Training Log** | `experiments/checkpoints/unetplusplus_resnet34_bone_suppressed/training_history.csv` | Full 40-epoch loss and validation history |
+| **Comprehensive Summary** | [`TRAINING_RESULTS.md`](TRAINING_RESULTS.md) | Exhaustive multi-model report & clinical synthesis |
+| **Interactive Gallery** | [`gallery.html`](../outputs/unetplusplus_resnet34_bone_suppressed/gallery.html) | Visual card browser for all 75 test samples |
+| **Sample Cards (PNG)** | `outputs/unetplusplus_resnet34_bone_suppressed/visualizations/` | `[Input] | [Ground Truth] | [Prediction]` cards |
+| **Test Metrics CSV** | [`test_inference_summary.csv`](../outputs/unetplusplus_resnet34_bone_suppressed/test_inference_summary.csv) | Per-sample Dice & IoU scores |
+| **SegFormer Best Weights** | `checkpoints/segformer_mit_b3_bone_suppressed/best_model.pth` | Top overall model checkpoint (**0.4297 Dice**) |
+| **U-Net++ Best Weights** | `checkpoints/unetplusplus_resnet34_bone_suppressed/best_model.pth` | Top CNN model checkpoint (**0.4028 Dice**) |
+| **Epoch Training Log** | `checkpoints/unetplusplus_resnet34_bone_suppressed/training_history.csv` | Full 40-epoch loss and validation history |
 
 ---
 

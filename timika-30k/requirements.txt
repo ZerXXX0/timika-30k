@@ -1,0 +1,13 @@
+# Runtime dependencies (lower bounds). Versions the project was last run with are noted on each line.
+#
+# Install the CUDA build of PyTorch first, from https://pytorch.org (a plain `pip install torch`
+# may give a CPU-only build), then:  pip install -r requirements.txt
+torch>=2.4                          # run with 2.14.0+cu132
+segmentation-models-pytorch>=0.5.0  # run with 0.5.0 (ImageNet encoder weights are fetched from the Hugging Face hub)
+albumentations>=2.0                 # run with 2.0.8
+opencv-python>=4.8                  # run with 5.0.0.93
+numpy>=1.26                         # run with 2.3.5
+pandas>=2.0                         # run with 3.0.5
+pillow>=10.0                        # run with 12.3.0
+
+# Development: pip install pytest

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timika30k"
+version = "0.1.0"
+description = "Multi-label chest X-ray disease segmentation (U-Net++, SegFormer) on the Timika-30k data"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.4",
+    "segmentation-models-pytorch>=0.5.0",
+    "albumentations>=2.0",
+    "opencv-python>=4.8",
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+# Installed commands; each is the same as `python -m timika.cli.<module>`.
+[project.scripts]
+timika-train = "timika.cli.train:main"
+timika-train-all = "timika.cli.train_all:main"
+timika-infer-samples = "timika.cli.infer_samples:main"
+timika-schema-infer = "timika.cli.schema_infer:main"
+timika-schema-evaluate = "timika.cli.schema_evaluate:main"
+timika-schema-overlay = "timika.cli.schema_overlay:main"
+timika-prepare-nnunet = "timika.cli.prepare_nnunet:main"
+
+[tool.setuptools.packages.find]
+include = ["timika*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
